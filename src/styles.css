@@ -234,3 +234,54 @@ button {
     grid-template-columns: 1fr;
   }
 }
+
+.daily-target {
+  margin: 20px 0;
+  padding: 20px;
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.08);
+  text-align: left;
+}
+
+.daily-target-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+}
+
+.daily-target-header span {
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.daily-target-header strong {
+  font-size: 14px;
+  opacity: 0.8;
+}
+
+.daily-target p {
+  font-size: 14px;
+  margin: 10px 0 15px;
+  opacity: 0.75;
+}
+
+.target-progress {
+  width: 100%;
+  height: 10px;
+  background: #333;
+  border-radius: 20px;
+  overflow: hidden;
+}
+
+.target-fill {
+  height: 100%;
+  background: #22c55e;
+  transition: width 0.3s ease;
+}
+
+.daily-target small {
+  display: block;
+  margin-top: 10px;
+  opacity: 0.7;
+ }
