@@ -166,3 +166,35 @@ button {
 .dashboard-subjects strong {
   font-size: 18px;
 }
+
+/* StudyPilot Branding */
+.branding {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 25px;
+}
+
+.branding-logo {
+  width: 150px;
+  height: 150px;
+  object-fit: contain;
+  border-radius: 20px;
+  margin-bottom: 12px;
+  filter: drop-shadow(0 0 12px rgba(59, 130, 246, 0.45));
+}
+
+.branding-title {
+  font-size: 42px;
+  font-weight: 700;
+  margin: 0;
+  letter-spacing: 1px;
+}
+
+.branding-tagline {
+  margin: 8px 0 0;
+  font-size: 18px;
+  font-weight: 500;
+  opacity: 0.85;
+  letter-spacing: 1px;
+}
