@@ -300,6 +300,43 @@ function App() {
             Exam Date: {student.examDate}
           </div>
 
+<div className="quick-stats">
+  <div className="stat-card">
+    <span>📊</span>
+    <strong>{overall}%</strong>
+    <small>Overall Progress</small>
+  </div>
+
+  <div className="stat-card">
+    <span>📚</span>
+    <strong>
+      {[
+        "english",
+        "mathematics",
+        "science",
+        "socialScience",
+      ].reduce((total, subject) => {
+        return (
+          total +
+          getChapters(subject).filter(
+            (_, index) =>
+              progress[
+                `${student.className}-${subject}-${index}`
+              ] === "completed"
+          ).length
+        );
+      }, 0)}
+    </strong>
+    <small>Chapters Completed</small>
+  </div>
+
+  <div className="stat-card">
+    <span>🎯</span>
+    <strong>4</strong>
+    <small>Subjects</small>
+  </div>
+</div>
+          
           <div className="progress-box">
             <h2>Overall Progress</h2>
 
