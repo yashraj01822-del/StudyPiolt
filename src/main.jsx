@@ -267,7 +267,7 @@ function App() {
     return (
       <div className="app">
         <div className="setup-card dashboard">
-          <h1>StudyPilot</h1>
+        
 
 <div className="branding">
   <img
