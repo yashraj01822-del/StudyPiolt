@@ -307,6 +307,21 @@ function App() {
     <small>Overall Progress</small>
   </div>
 
+<div className="daily-target">
+  <div className="daily-target-header">
+    <span>🎯 Today's Study Target</span>
+    <strong>2 Chapters</strong>
+  </div>
+
+  <p>Stay consistent and keep moving forward!</p>
+
+  <div className="target-progress">
+    <div className="target-fill" style={{ width: "0%" }} />
+  </div>
+
+  <small>0 / 2 chapters completed today</small>
+</div>
+  
   <div className="stat-card">
     <span>📚</span>
     <strong>
