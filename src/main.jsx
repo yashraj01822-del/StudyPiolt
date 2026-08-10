@@ -15,6 +15,8 @@ function App() {
     examDate: "",
   });
 
+  const [progress, setProgress] = useState({});
+
   const updateStudent = (field, value) => {
     setStudent((prev) => ({
       ...prev,
@@ -42,13 +44,107 @@ function App() {
     setScreen("chapters");
   };
 
-  // WELCOME
+  const getChapters = (subject) => {
+    const classData =
+      student.className === "9"
+        ? syllabus.class9
+        : syllabus.class10;
+
+    const subjectData = classData.subjects[subject];
+
+    if (!subjectData) {
+      return [];
+    }
+
+    if (subject === "socialScience") {
+      return [
+        ...(subjectData.chapters || []),
+        ...(subjectData.history || []),
+        ...(subjectData.geography || []),
+        ...(subjectData.politicalScience || []),
+        ...(subjectData.economics || []),
+      ];
+    }
+
+    if (subjectData.chapters) {
+      return subjectData.chapters;
+    }
+
+    if (subjectData.units) {
+      return subjectData.units;
+    }
+
+    return [];
+  };
+
+  const changeStatus = (subject, index) => {
+    const key = `${student.className}-${subject}-${index}`;
+
+    setProgress((prev) => {
+      const current = prev[key] || "not-started";
+
+      let next;
+
+      if (current === "not-started") {
+        next = "ongoing";
+      } else if (current === "ongoing") {
+        next = "completed";
+      } else {
+        next = "not-started";
+      }
+
+      return {
+        ...prev,
+        [key]: next,
+      };
+    });
+  };
+
+  const getSubjectName = (subject) => {
+    if (subject === "english") return "📖 English";
+    if (subject === "mathematics") return "📐 Mathematics";
+    if (subject === "science") return "🔬 Science";
+    return "🌍 Social Science";
+  };
+
+  const getStatusText = (status) => {
+    if (status === "completed") {
+      return "🟢 Completed";
+    }
+
+    if (status === "ongoing") {
+      return "🟡 Ongoing";
+    }
+
+    return "🔴 Not Started";
+  };
+
+  const getProgress = (subject) => {
+    const chapters = getChapters(subject);
+
+    if (chapters.length === 0) {
+      return 0;
+    }
+
+    const completed = chapters.filter((_, index) => {
+      const key = `${student.className}-${subject}-${index}`;
+      return progress[key] === "completed";
+    }).length;
+
+    return Math.round((completed / chapters.length) * 100);
+  };
+
+  // ---------------- WELCOME ----------------
+
   if (screen === "welcome") {
     return (
       <div className="app">
         <div className="setup-card">
           <h1>StudyPilot</h1>
-          <p>Your intelligent study companion.</p>
+
+          <p>
+            Your intelligent study companion.
+          </p>
 
           <button onClick={() => setScreen("setup")}>
             Get Started
@@ -58,14 +154,17 @@ function App() {
     );
   }
 
-  // STUDENT SETUP
+  // ---------------- STUDENT SETUP ----------------
+
   if (screen === "setup") {
     return (
       <div className="app">
         <div className="setup-card">
           <h1>Student Setup</h1>
 
-          <p>Let's create your StudyPilot profile.</p>
+          <p>
+            Let's create your StudyPilot profile.
+          </p>
 
           <input
             type="text"
@@ -108,7 +207,9 @@ function App() {
           >
             <option value="">Select exam</option>
             <option value="Unit Test">Unit Test</option>
-            <option value="Half-Yearly">Half-Yearly</option>
+            <option value="Half-Yearly">
+              Half-Yearly
+            </option>
             <option value="Annual">Annual</option>
           </select>
 
@@ -118,7 +219,10 @@ function App() {
             type="date"
             value={student.examDate}
             onChange={(e) =>
-              updateStudent("examDate", e.target.value)
+              updateStudent(
+                "examDate",
+                e.target.value
+              )
             }
           />
 
@@ -137,7 +241,8 @@ function App() {
     );
   }
 
-  // SUBJECT SELECTION
+  // ---------------- SUBJECTS ----------------
+
   if (screen === "subjects") {
     return (
       <div className="app">
@@ -149,23 +254,35 @@ function App() {
             {student.section}
           </p>
 
+          <p>
+            {student.exam} • {student.examDate}
+          </p>
+
           <div className="subject-list">
-            <button onClick={() => openSubject("english")}>
+            <button
+              onClick={() => openSubject("english")}
+            >
               📖 English
             </button>
 
             <button
-              onClick={() => openSubject("mathematics")}
+              onClick={() =>
+                openSubject("mathematics")
+              }
             >
               📐 Mathematics
             </button>
 
-            <button onClick={() => openSubject("science")}>
+            <button
+              onClick={() => openSubject("science")}
+            >
               🔬 Science
             </button>
 
             <button
-              onClick={() => openSubject("socialScience")}
+              onClick={() =>
+                openSubject("socialScience")
+              }
             >
               🌍 Social Science
             </button>
@@ -182,64 +299,87 @@ function App() {
     );
   }
 
-  // CHAPTER LIST
+  // ---------------- CHAPTERS ----------------
+
   if (screen === "chapters") {
-    const classData =
-      student.className === "9"
-        ? syllabus.class9
-        : syllabus.class10;
+    const chapters = getChapters(selectedSubject);
 
-    const subjectData =
-      classData.subjects[selectedSubject];
+    const subjectProgress =
+      getProgress(selectedSubject);
 
-    let chapters = [];
-
-    if (selectedSubject === "socialScience") {
-      chapters = [
-        ...(subjectData.chapters || []),
-        ...(subjectData.history || []),
-        ...(subjectData.geography || []),
-        ...(subjectData.politicalScience || []),
-        ...(subjectData.economics || []),
-      ];
-    } else if (subjectData.chapters) {
-      chapters = subjectData.chapters;
-    } else if (subjectData.units) {
-      chapters = subjectData.units;
-    }
+    const completedCount = chapters.filter(
+      (_, index) => {
+        const key = `${student.className}-${selectedSubject}-${index}`;
+        return progress[key] === "completed";
+      }
+    ).length;
 
     return (
       <div className="app">
-        <div className="setup-card">
+        <div className="setup-card chapter-screen">
           <h1>
-            {selectedSubject === "english"
-              ? "📖 English"
-              : selectedSubject === "mathematics"
-              ? "📐 Mathematics"
-              : selectedSubject === "science"
-              ? "🔬 Science"
-              : "🌍 Social Science"}
+            {getSubjectName(selectedSubject)}
           </h1>
 
           <p>
-            {classData.syllabus}
+            {student.exam} • Exam Date:{" "}
+            {student.examDate}
+          </p>
+
+          <div className="progress-box">
+            <h2>
+              {subjectProgress}% Complete
+            </h2>
+
+            <div className="progress-bar">
+              <div
+                className="progress-fill"
+                style={{
+                  width: `${subjectProgress}%`,
+                }}
+              ></div>
+            </div>
+
+            <p>
+              {completedCount} / {chapters.length}{" "}
+              chapters completed
+            </p>
+          </div>
+
+          <p className="status-hint">
+            Tap a chapter to change its status:
+            <br />
+            🔴 → 🟡 → 🟢 → 🔴
           </p>
 
           <div className="chapter-list">
-            {chapters.map((chapter, index) => (
-              <div
-                className="chapter-card"
-                key={index}
-              >
-                <span>
-                  {index + 1}. {chapter}
-                </span>
+            {chapters.map((chapter, index) => {
+              const key = `${student.className}-${selectedSubject}-${index}`;
 
-                <span className="status red">
-                  🔴 Not Started
-                </span>
-              </div>
-            ))}
+              const status =
+                progress[key] || "not-started";
+
+              return (
+                <button
+                  className={`chapter-card ${status}`}
+                  key={key}
+                  onClick={() =>
+                    changeStatus(
+                      selectedSubject,
+                      index
+                    )
+                  }
+                >
+                  <span className="chapter-name">
+                    {index + 1}. {chapter}
+                  </span>
+
+                  <span className="status">
+                    {getStatusText(status)}
+                  </span>
+                </button>
+              );
+            })}
           </div>
 
           {chapters.length === 0 && (
