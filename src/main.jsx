@@ -271,7 +271,7 @@ function App() {
 
 <div className="branding">
   <img
-    src="/studypilot-logo.png"
+    src="/IMG-20260810-WA0057.jpg"
     alt="StudyPilot Logo"
     className="branding-logo"
   />
