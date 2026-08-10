@@ -1,9 +1,11 @@
 import React, { useState } from "react";
 import ReactDOM from "react-dom/client";
 import "./styles.css";
+import syllabus from "./data/syllabus";
 
 function App() {
   const [screen, setScreen] = useState("welcome");
+  const [selectedSubject, setSelectedSubject] = useState(null);
 
   const [student, setStudent] = useState({
     name: "",
@@ -35,17 +37,18 @@ function App() {
     setScreen("subjects");
   };
 
-  // ---------------- WELCOME ----------------
+  const openSubject = (subject) => {
+    setSelectedSubject(subject);
+    setScreen("chapters");
+  };
 
+  // WELCOME
   if (screen === "welcome") {
     return (
       <div className="app">
         <div className="setup-card">
           <h1>StudyPilot</h1>
-
-          <p>
-            Your intelligent study companion.
-          </p>
+          <p>Your intelligent study companion.</p>
 
           <button onClick={() => setScreen("setup")}>
             Get Started
@@ -55,17 +58,14 @@ function App() {
     );
   }
 
-  // ---------------- STUDENT SETUP ----------------
-
+  // STUDENT SETUP
   if (screen === "setup") {
     return (
       <div className="app">
         <div className="setup-card">
           <h1>Student Setup</h1>
 
-          <p>
-            Let's create your StudyPilot profile.
-          </p>
+          <p>Let's create your StudyPilot profile.</p>
 
           <input
             type="text"
@@ -82,17 +82,9 @@ function App() {
               updateStudent("className", e.target.value)
             }
           >
-            <option value="">
-              Select class
-            </option>
-
-            <option value="9">
-              Class 9
-            </option>
-
-            <option value="10">
-              Class 10
-            </option>
+            <option value="">Select class</option>
+            <option value="9">Class 9</option>
+            <option value="10">Class 10</option>
           </select>
 
           <select
@@ -101,25 +93,11 @@ function App() {
               updateStudent("section", e.target.value)
             }
           >
-            <option value="">
-              Select section
-            </option>
-
-            <option value="A">
-              Section A
-            </option>
-
-            <option value="B">
-              Section B
-            </option>
-
-            <option value="C">
-              Section C
-            </option>
-
-            <option value="D">
-              Section D
-            </option>
+            <option value="">Select section</option>
+            <option value="A">Section A</option>
+            <option value="B">Section B</option>
+            <option value="C">Section C</option>
+            <option value="D">Section D</option>
           </select>
 
           <select
@@ -128,35 +106,19 @@ function App() {
               updateStudent("exam", e.target.value)
             }
           >
-            <option value="">
-              Select exam
-            </option>
-
-            <option value="Unit Test">
-              Unit Test
-            </option>
-
-            <option value="Half-Yearly">
-              Half-Yearly
-            </option>
-
-            <option value="Annual">
-              Annual
-            </option>
+            <option value="">Select exam</option>
+            <option value="Unit Test">Unit Test</option>
+            <option value="Half-Yearly">Half-Yearly</option>
+            <option value="Annual">Annual</option>
           </select>
 
-          <label>
-            Exam Date
-          </label>
+          <label>Exam Date</label>
 
           <input
             type="date"
             value={student.examDate}
             onChange={(e) =>
-              updateStudent(
-                "examDate",
-                e.target.value
-              )
+              updateStudent("examDate", e.target.value)
             }
           />
 
@@ -175,58 +137,38 @@ function App() {
     );
   }
 
-  // ---------------- SUBJECTS ----------------
-
+  // SUBJECT SELECTION
   if (screen === "subjects") {
     return (
       <div className="app">
         <div className="setup-card">
-          <h1>Select Subjects</h1>
+          <h1>Select Subject</h1>
 
           <p>
-            Class {student.className}
-            {" • "}
-            Section {student.section}
-          </p>
-
-          <p>
-            {student.exam}
-            {" • "}
-            {student.examDate}
+            Class {student.className} • Section{" "}
+            {student.section}
           </p>
 
           <div className="subject-list">
-
-            <button
-              onClick={() => alert("English selected")}
-            >
+            <button onClick={() => openSubject("english")}>
               📖 English
             </button>
 
             <button
-              onClick={() =>
-                alert("Mathematics selected")
-              }
+              onClick={() => openSubject("mathematics")}
             >
               📐 Mathematics
             </button>
 
-            <button
-              onClick={() =>
-                alert("Science selected")
-              }
-            >
+            <button onClick={() => openSubject("science")}>
               🔬 Science
             </button>
 
             <button
-              onClick={() =>
-                alert("Social Science selected")
-              }
+              onClick={() => openSubject("socialScience")}
             >
               🌍 Social Science
             </button>
-
           </div>
 
           <button
@@ -234,6 +176,84 @@ function App() {
             onClick={() => setScreen("setup")}
           >
             Back
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  // CHAPTER LIST
+  if (screen === "chapters") {
+    const classData =
+      student.className === "9"
+        ? syllabus.class9
+        : syllabus.class10;
+
+    const subjectData =
+      classData.subjects[selectedSubject];
+
+    let chapters = [];
+
+    if (selectedSubject === "socialScience") {
+      chapters = [
+        ...(subjectData.chapters || []),
+        ...(subjectData.history || []),
+        ...(subjectData.geography || []),
+        ...(subjectData.politicalScience || []),
+        ...(subjectData.economics || []),
+      ];
+    } else if (subjectData.chapters) {
+      chapters = subjectData.chapters;
+    } else if (subjectData.units) {
+      chapters = subjectData.units;
+    }
+
+    return (
+      <div className="app">
+        <div className="setup-card">
+          <h1>
+            {selectedSubject === "english"
+              ? "📖 English"
+              : selectedSubject === "mathematics"
+              ? "📐 Mathematics"
+              : selectedSubject === "science"
+              ? "🔬 Science"
+              : "🌍 Social Science"}
+          </h1>
+
+          <p>
+            {classData.syllabus}
+          </p>
+
+          <div className="chapter-list">
+            {chapters.map((chapter, index) => (
+              <div
+                className="chapter-card"
+                key={index}
+              >
+                <span>
+                  {index + 1}. {chapter}
+                </span>
+
+                <span className="status red">
+                  🔴 Not Started
+                </span>
+              </div>
+            ))}
+          </div>
+
+          {chapters.length === 0 && (
+            <p>
+              No chapters have been added for this
+              subject yet.
+            </p>
+          )}
+
+          <button
+            className="secondary"
+            onClick={() => setScreen("subjects")}
+          >
+            Back to Subjects
           </button>
         </div>
       </div>
