@@ -24,37 +24,16 @@ function App() {
     }));
   };
 
-  const continueToSubjects = () => {
-    if (
-      !student.name ||
-      !student.className ||
-      !student.section ||
-      !student.exam ||
-      !student.examDate
-    ) {
-      alert("Please complete all fields.");
-      return;
-    }
-
-    setScreen("subjects");
-  };
-
-  const openSubject = (subject) => {
-    setSelectedSubject(subject);
-    setScreen("chapters");
+  const getClassData = () => {
+    return student.className === "9"
+      ? syllabus.class9
+      : syllabus.class10;
   };
 
   const getChapters = (subject) => {
-    const classData =
-      student.className === "9"
-        ? syllabus.class9
-        : syllabus.class10;
+    const subjectData = getClassData().subjects[subject];
 
-    const subjectData = classData.subjects[subject];
-
-    if (!subjectData) {
-      return [];
-    }
+    if (!subjectData) return [];
 
     if (subject === "socialScience") {
       return [
@@ -77,21 +56,51 @@ function App() {
     return [];
   };
 
+  const getProgress = (subject) => {
+    const chapters = getChapters(subject);
+
+    if (chapters.length === 0) return 0;
+
+    const completed = chapters.filter((_, index) => {
+      const key = `${student.className}-${subject}-${index}`;
+      return progress[key] === "completed";
+    }).length;
+
+    return Math.round(
+      (completed / chapters.length) * 100
+    );
+  };
+
+  const getOverallProgress = () => {
+    const subjects = [
+      "english",
+      "mathematics",
+      "science",
+      "socialScience",
+    ];
+
+    const values = subjects.map((subject) =>
+      getProgress(subject)
+    );
+
+    return Math.round(
+      values.reduce((a, b) => a + b, 0) /
+        values.length
+    );
+  };
+
   const changeStatus = (subject, index) => {
     const key = `${student.className}-${subject}-${index}`;
 
     setProgress((prev) => {
       const current = prev[key] || "not-started";
 
-      let next;
-
-      if (current === "not-started") {
-        next = "ongoing";
-      } else if (current === "ongoing") {
-        next = "completed";
-      } else {
-        next = "not-started";
-      }
+      const next =
+        current === "not-started"
+          ? "ongoing"
+          : current === "ongoing"
+          ? "completed"
+          : "not-started";
 
       return {
         ...prev,
@@ -100,51 +109,51 @@ function App() {
     });
   };
 
-  const getSubjectName = (subject) => {
+  const continueToDashboard = () => {
+    if (
+      !student.name ||
+      !student.className ||
+      !student.section ||
+      !student.exam ||
+      !student.examDate
+    ) {
+      alert("Please complete all fields.");
+      return;
+    }
+
+    setScreen("dashboard");
+  };
+
+  const openSubject = (subject) => {
+    setSelectedSubject(subject);
+    setScreen("chapters");
+  };
+
+  const subjectName = (subject) => {
     if (subject === "english") return "📖 English";
-    if (subject === "mathematics") return "📐 Mathematics";
+    if (subject === "mathematics")
+      return "📐 Mathematics";
     if (subject === "science") return "🔬 Science";
     return "🌍 Social Science";
   };
 
-  const getStatusText = (status) => {
-    if (status === "completed") {
+  const statusText = (status) => {
+    if (status === "completed")
       return "🟢 Completed";
-    }
 
-    if (status === "ongoing") {
+    if (status === "ongoing")
       return "🟡 Ongoing";
-    }
 
     return "🔴 Not Started";
   };
 
-  const getProgress = (subject) => {
-    const chapters = getChapters(subject);
-
-    if (chapters.length === 0) {
-      return 0;
-    }
-
-    const completed = chapters.filter((_, index) => {
-      const key = `${student.className}-${subject}-${index}`;
-      return progress[key] === "completed";
-    }).length;
-
-    return Math.round((completed / chapters.length) * 100);
-  };
-
-  // ---------------- WELCOME ----------------
-
+  // WELCOME
   if (screen === "welcome") {
     return (
       <div className="app">
         <div className="setup-card">
           <h1>StudyPilot</h1>
-
-          <p>
-            Your intelligent study companion.
-          </p>
+          <p>Your intelligent study companion.</p>
 
           <button onClick={() => setScreen("setup")}>
             Get Started
@@ -154,17 +163,14 @@ function App() {
     );
   }
 
-  // ---------------- STUDENT SETUP ----------------
-
+  // SETUP
   if (screen === "setup") {
     return (
       <div className="app">
         <div className="setup-card">
           <h1>Student Setup</h1>
 
-          <p>
-            Let's create your StudyPilot profile.
-          </p>
+          <p>Create your StudyPilot profile.</p>
 
           <input
             type="text"
@@ -178,7 +184,10 @@ function App() {
           <select
             value={student.className}
             onChange={(e) =>
-              updateStudent("className", e.target.value)
+              updateStudent(
+                "className",
+                e.target.value
+              )
             }
           >
             <option value="">Select class</option>
@@ -189,7 +198,10 @@ function App() {
           <select
             value={student.section}
             onChange={(e) =>
-              updateStudent("section", e.target.value)
+              updateStudent(
+                "section",
+                e.target.value
+              )
             }
           >
             <option value="">Select section</option>
@@ -202,15 +214,22 @@ function App() {
           <select
             value={student.exam}
             onChange={(e) =>
-              updateStudent("exam", e.target.value)
+              updateStudent(
+                "exam",
+                e.target.value
+              )
             }
           >
             <option value="">Select exam</option>
-            <option value="Unit Test">Unit Test</option>
+            <option value="Unit Test">
+              Unit Test
+            </option>
             <option value="Half-Yearly">
               Half-Yearly
             </option>
-            <option value="Annual">Annual</option>
+            <option value="Annual">
+              Annual
+            </option>
           </select>
 
           <label>Exam Date</label>
@@ -226,7 +245,7 @@ function App() {
             }
           />
 
-          <button onClick={continueToSubjects}>
+          <button onClick={continueToDashboard}>
             Continue
           </button>
 
@@ -241,8 +260,80 @@ function App() {
     );
   }
 
-  // ---------------- SUBJECTS ----------------
+  // DASHBOARD
+  if (screen === "dashboard") {
+    const overall = getOverallProgress();
 
+    return (
+      <div className="app">
+        <div className="setup-card dashboard">
+          <h1>StudyPilot</h1>
+
+          <h2>
+            Welcome, {student.name} 👋
+          </h2>
+
+          <p>
+            Class {student.className} • Section{" "}
+            {student.section}
+          </p>
+
+          <div className="exam-box">
+            <strong>{student.exam}</strong>
+            <br />
+            Exam Date: {student.examDate}
+          </div>
+
+          <div className="progress-box">
+            <h2>Overall Progress</h2>
+
+            <div className="progress-bar">
+              <div
+                className="progress-fill"
+                style={{
+                  width: `${overall}%`,
+                }}
+              />
+            </div>
+
+            <h2>{overall}%</h2>
+          </div>
+
+          <div className="dashboard-subjects">
+            {[
+              "english",
+              "mathematics",
+              "science",
+              "socialScience",
+            ].map((subject) => (
+              <button
+                key={subject}
+                onClick={() =>
+                  openSubject(subject)
+                }
+              >
+                <span>
+                  {subjectName(subject)}
+                </span>
+
+                <strong>
+                  {getProgress(subject)}%
+                </strong>
+              </button>
+            ))}
+          </div>
+
+          <button
+            onClick={() => setScreen("subjects")}
+          >
+            📚 My Syllabus
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  // SUBJECTS
   if (screen === "subjects") {
     return (
       <div className="app">
@@ -254,60 +345,39 @@ function App() {
             {student.section}
           </p>
 
-          <p>
-            {student.exam} • {student.examDate}
-          </p>
-
           <div className="subject-list">
-            <button
-              onClick={() => openSubject("english")}
-            >
-              📖 English
-            </button>
-
-            <button
-              onClick={() =>
-                openSubject("mathematics")
-              }
-            >
-              📐 Mathematics
-            </button>
-
-            <button
-              onClick={() => openSubject("science")}
-            >
-              🔬 Science
-            </button>
-
-            <button
-              onClick={() =>
-                openSubject("socialScience")
-              }
-            >
-              🌍 Social Science
-            </button>
+            {[
+              ["english", "📖 English"],
+              ["mathematics", "📐 Mathematics"],
+              ["science", "🔬 Science"],
+              ["socialScience", "🌍 Social Science"],
+            ].map(([key, name]) => (
+              <button
+                key={key}
+                onClick={() => openSubject(key)}
+              >
+                {name}
+              </button>
+            ))}
           </div>
 
           <button
             className="secondary"
-            onClick={() => setScreen("setup")}
+            onClick={() => setScreen("dashboard")}
           >
-            Back
+            Back to Dashboard
           </button>
         </div>
       </div>
     );
   }
 
-  // ---------------- CHAPTERS ----------------
-
+  // CHAPTERS
   if (screen === "chapters") {
     const chapters = getChapters(selectedSubject);
+    const percentage = getProgress(selectedSubject);
 
-    const subjectProgress =
-      getProgress(selectedSubject);
-
-    const completedCount = chapters.filter(
+    const completed = chapters.filter(
       (_, index) => {
         const key = `${student.className}-${selectedSubject}-${index}`;
         return progress[key] === "completed";
@@ -317,37 +387,28 @@ function App() {
     return (
       <div className="app">
         <div className="setup-card chapter-screen">
-          <h1>
-            {getSubjectName(selectedSubject)}
-          </h1>
-
-          <p>
-            {student.exam} • Exam Date:{" "}
-            {student.examDate}
-          </p>
+          <h1>{subjectName(selectedSubject)}</h1>
 
           <div className="progress-box">
-            <h2>
-              {subjectProgress}% Complete
-            </h2>
+            <h2>{percentage}% Complete</h2>
 
             <div className="progress-bar">
               <div
                 className="progress-fill"
                 style={{
-                  width: `${subjectProgress}%`,
+                  width: `${percentage}%`,
                 }}
-              ></div>
+              />
             </div>
 
             <p>
-              {completedCount} / {chapters.length}{" "}
+              {completed} / {chapters.length}{" "}
               chapters completed
             </p>
           </div>
 
           <p className="status-hint">
-            Tap a chapter to change its status:
+            Tap a chapter:
             <br />
             🔴 → 🟡 → 🟢 → 🔴
           </p>
@@ -375,25 +436,20 @@ function App() {
                   </span>
 
                   <span className="status">
-                    {getStatusText(status)}
+                    {statusText(status)}
                   </span>
                 </button>
               );
             })}
           </div>
 
-          {chapters.length === 0 && (
-            <p>
-              No chapters have been added for this
-              subject yet.
-            </p>
-          )}
-
           <button
             className="secondary"
-            onClick={() => setScreen("subjects")}
+            onClick={() =>
+              setScreen("dashboard")
+            }
           >
-            Back to Subjects
+            Back to Dashboard
           </button>
         </div>
       </div>
