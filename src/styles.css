@@ -142,3 +142,27 @@ button {
 .status {
   font-size: 13px;
 }
+
+.exam-box {
+  margin: 15px 0;
+  padding: 15px;
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.dashboard-subjects {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin: 20px 0;
+}
+
+.dashboard-subjects button {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.dashboard-subjects strong {
+  font-size: 18px;
+}
