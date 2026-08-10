@@ -263,7 +263,19 @@ function App() {
   // DASHBOARD
   if (screen === "dashboard") {
     const overall = getOverallProgress();
+const completedToday = Object.values(progress).filter(
+  (status) => status === "completed"
+).length;
 
+const dailyTarget = 2;
+const dailyProgress = Math.min(
+  completedToday,
+  dailyTarget
+);
+
+const dailyPercentage = Math.round(
+  (dailyProgress / dailyTarget) * 100
+);
     return (
       <div className="app">
         <div className="setup-card dashboard">
