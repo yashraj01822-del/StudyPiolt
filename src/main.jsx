@@ -20,12 +20,32 @@ function App() {
     }));
   };
 
+  const continueToSubjects = () => {
+    if (
+      !student.name ||
+      !student.className ||
+      !student.section ||
+      !student.exam ||
+      !student.examDate
+    ) {
+      alert("Please complete all fields.");
+      return;
+    }
+
+    setScreen("subjects");
+  };
+
+  // ---------------- WELCOME ----------------
+
   if (screen === "welcome") {
     return (
       <div className="app">
         <div className="setup-card">
           <h1>StudyPilot</h1>
-          <p>Your intelligent study companion.</p>
+
+          <p>
+            Your intelligent study companion.
+          </p>
 
           <button onClick={() => setScreen("setup")}>
             Get Started
@@ -35,89 +55,192 @@ function App() {
     );
   }
 
-  return (
-    <div className="app">
-      <div className="setup-card">
-        <h1>Student Setup</h1>
+  // ---------------- STUDENT SETUP ----------------
 
-        <p>Let's create your StudyPilot profile.</p>
+  if (screen === "setup") {
+    return (
+      <div className="app">
+        <div className="setup-card">
+          <h1>Student Setup</h1>
 
-        <input
-          type="text"
-          placeholder="Student name"
-          value={student.name}
-          onChange={(e) =>
-            updateStudent("name", e.target.value)
-          }
-        />
+          <p>
+            Let's create your StudyPilot profile.
+          </p>
 
-        <select
-          value={student.className}
-          onChange={(e) =>
-            updateStudent("className", e.target.value)
-          }
-        >
-          <option value="">Select class</option>
-          <option value="9">Class 9</option>
-          <option value="10">Class 10</option>
-        </select>
-
-        <select
-          value={student.section}
-          onChange={(e) =>
-            updateStudent("section", e.target.value)
-          }
-        >
-          <option value="">Select section</option>
-          <option value="A">Section A</option>
-          <option value="B">Section B</option>
-          <option value="C">Section C</option>
-          <option value="D">Section D</option>
-        </select>
-
-        <select
-          value={student.exam}
-          onChange={(e) =>
-            updateStudent("exam", e.target.value)
-          }
-        >
-          <option value="">Select exam</option>
-          <option value="Unit Test">Unit Test</option>
-          <option value="Half-Yearly">Half-Yearly</option>
-          <option value="Annual">Annual</option>
-        </select>
-
-        <label>Exam Date</label>
-
-        <input
-          type="date"
-          value={student.examDate}
-          onChange={(e) =>
-            updateStudent("examDate", e.target.value)
-          }
-        />
-
-        <button
-          onClick={() => {
-            if (
-              !student.name ||
-              !student.className ||
-              !student.section ||
-              !student.exam ||
-              !student.examDate
-            ) {
-              alert("Please complete all fields.");
-              return;
+          <input
+            type="text"
+            placeholder="Student name"
+            value={student.name}
+            onChange={(e) =>
+              updateStudent("name", e.target.value)
             }
+          />
 
-            setScreen("subjects");
-          }}
-        >
-          Continue
-        </button>
+          <select
+            value={student.className}
+            onChange={(e) =>
+              updateStudent("className", e.target.value)
+            }
+          >
+            <option value="">
+              Select class
+            </option>
+
+            <option value="9">
+              Class 9
+            </option>
+
+            <option value="10">
+              Class 10
+            </option>
+          </select>
+
+          <select
+            value={student.section}
+            onChange={(e) =>
+              updateStudent("section", e.target.value)
+            }
+          >
+            <option value="">
+              Select section
+            </option>
+
+            <option value="A">
+              Section A
+            </option>
+
+            <option value="B">
+              Section B
+            </option>
+
+            <option value="C">
+              Section C
+            </option>
+
+            <option value="D">
+              Section D
+            </option>
+          </select>
+
+          <select
+            value={student.exam}
+            onChange={(e) =>
+              updateStudent("exam", e.target.value)
+            }
+          >
+            <option value="">
+              Select exam
+            </option>
+
+            <option value="Unit Test">
+              Unit Test
+            </option>
+
+            <option value="Half-Yearly">
+              Half-Yearly
+            </option>
+
+            <option value="Annual">
+              Annual
+            </option>
+          </select>
+
+          <label>
+            Exam Date
+          </label>
+
+          <input
+            type="date"
+            value={student.examDate}
+            onChange={(e) =>
+              updateStudent(
+                "examDate",
+                e.target.value
+              )
+            }
+          />
+
+          <button onClick={continueToSubjects}>
+            Continue
+          </button>
+
+          <button
+            className="secondary"
+            onClick={() => setScreen("welcome")}
+          >
+            Back
+          </button>
+        </div>
       </div>
-    </div>
-  );
+    );
+  }
+
+  // ---------------- SUBJECTS ----------------
+
+  if (screen === "subjects") {
+    return (
+      <div className="app">
+        <div className="setup-card">
+          <h1>Select Subjects</h1>
+
+          <p>
+            Class {student.className}
+            {" • "}
+            Section {student.section}
+          </p>
+
+          <p>
+            {student.exam}
+            {" • "}
+            {student.examDate}
+          </p>
+
+          <div className="subject-list">
+
+            <button
+              onClick={() => alert("English selected")}
+            >
+              📖 English
+            </button>
+
+            <button
+              onClick={() =>
+                alert("Mathematics selected")
+              }
+            >
+              📐 Mathematics
+            </button>
+
+            <button
+              onClick={() =>
+                alert("Science selected")
+              }
+            >
+              🔬 Science
+            </button>
+
+            <button
+              onClick={() =>
+                alert("Social Science selected")
+              }
+            >
+              🌍 Social Science
+            </button>
+
+          </div>
+
+          <button
+            className="secondary"
+            onClick={() => setScreen("setup")}
+          >
+            Back
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  return null;
 }
 
 ReactDOM.createRoot(
