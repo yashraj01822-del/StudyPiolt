@@ -1,4 +1,4 @@
-* {
+ {
   box-sizing: border-box;
 }
 
@@ -38,3 +38,38 @@ button {
   cursor: pointer;
 }
 
+.setup-card {
+  width: min(92%, 450px);
+  padding: 30px;
+  border-radius: 20px;
+  background: #111936;
+  text-align: center;
+}
+
+.setup-card input,
+.setup-card select {
+  width: 100%;
+  margin: 8px 0;
+  padding: 13px;
+  border-radius: 10px;
+  border: none;
+  font-size: 16px;
+}
+
+.setup-card label {
+  display: block;
+  text-align: left;
+  margin-top: 10px;
+}
+
+.subject-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin: 25px 0;
+}
+
+.secondary {
+  margin-top: 10px;
+  opacity: 0.75;
+}
