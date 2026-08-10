@@ -269,6 +269,22 @@ function App() {
         <div className="setup-card dashboard">
           <h1>StudyPilot</h1>
 
+<div className="branding">
+  <img
+    src="/studypilot-logo.png"
+    alt="StudyPilot Logo"
+    className="branding-logo"
+  />
+
+  <h1 className="branding-title">
+    StudyPilot
+  </h1>
+
+  <p className="branding-tagline">
+    Navigate Your Success!!
+  </p>
+</div>
+          
           <h2>
             Welcome, {student.name} 👋
           </h2>
