@@ -1,8 +1,40 @@
-import React from "react";
+import React, { useState } from "react";
 import ReactDOM from "react-dom/client";
 import "./styles.css";
 
 function App() {
+  const [screen, setScreen] = useState("welcome");
+
+  const [student, setStudent] = useState({
+    name: "",
+    className: "",
+    section: "",
+    exam: "",
+    examDate: "",
+  });
+
+  const updateStudent = (field, value) => {
+    setStudent((prev) => ({
+      ...prev,
+      [field]: value,
+    }));
+  };
+
+  if (screen === "welcome") {
+    return (
+      <div className="app">
+        <div className="setup-card">
+          <h1>StudyPilot</h1>
+          <p>Your intelligent study companion.</p>
+
+          <button onClick={() => setScreen("setup")}>
+            Get Started
+          </button>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="app">
       <div className="setup-card">
@@ -13,15 +45,29 @@ function App() {
         <input
           type="text"
           placeholder="Student name"
+          value={student.name}
+          onChange={(e) =>
+            updateStudent("name", e.target.value)
+          }
         />
 
-        <select defaultValue="">
+        <select
+          value={student.className}
+          onChange={(e) =>
+            updateStudent("className", e.target.value)
+          }
+        >
           <option value="">Select class</option>
           <option value="9">Class 9</option>
           <option value="10">Class 10</option>
         </select>
 
-        <select defaultValue="">
+        <select
+          value={student.section}
+          onChange={(e) =>
+            updateStudent("section", e.target.value)
+          }
+        >
           <option value="">Select section</option>
           <option value="A">Section A</option>
           <option value="B">Section B</option>
@@ -29,7 +75,12 @@ function App() {
           <option value="D">Section D</option>
         </select>
 
-        <select defaultValue="">
+        <select
+          value={student.exam}
+          onChange={(e) =>
+            updateStudent("exam", e.target.value)
+          }
+        >
           <option value="">Select exam</option>
           <option value="Unit Test">Unit Test</option>
           <option value="Half-Yearly">Half-Yearly</option>
@@ -38,9 +89,30 @@ function App() {
 
         <label>Exam Date</label>
 
-        <input type="date" />
+        <input
+          type="date"
+          value={student.examDate}
+          onChange={(e) =>
+            updateStudent("examDate", e.target.value)
+          }
+        />
 
-        <button>
+        <button
+          onClick={() => {
+            if (
+              !student.name ||
+              !student.className ||
+              !student.section ||
+              !student.exam ||
+              !student.examDate
+            ) {
+              alert("Please complete all fields.");
+              return;
+            }
+
+            setScreen("subjects");
+          }}
+        >
           Continue
         </button>
       </div>
